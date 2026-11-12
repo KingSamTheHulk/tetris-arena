@@ -19,8 +19,29 @@ const NEXT_H = 62;
 const countdownMs = 650;
 const aiThinkMs = 240;
 const aiActionMs = 75;
+const RATINGS_KEY = "tetris-arena:ratings";
 
 const el = (id) => document.getElementById(id);
+
+function readLocalRatings() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(RATINGS_KEY));
+    if (raw && Number.isFinite(raw.player) && Number.isFinite(raw.ai)) {
+      return { player: raw.player, ai: raw.ai };
+    }
+  } catch {
+    // ignore malformed or unavailable storage
+  }
+  return null;
+}
+
+function writeLocalRatings(ratings) {
+  try {
+    localStorage.setItem(RATINGS_KEY, JSON.stringify(ratings));
+  } catch {
+    // ignore unavailable storage
+  }
+}
 
 const els = {
   playerBoard: el("playerBoard"),
@@ -398,8 +419,9 @@ async function saveResult(winner) {
     setRatings();
     els.finalRatings.textContent = `Your rating ${data.player} · AI ${data.ai}`;
   } catch (error) {
-    console.warn("Could not save match result:", error);
-    els.finalRatings.textContent = `Your rating ${state.ratings.player} · AI ${state.ratings.ai} (not saved)`;
+    writeLocalRatings(state.ratings);
+    console.warn("Could not reach the server, saved ratings locally:", error);
+    els.finalRatings.textContent = `Your rating ${state.ratings.player} · AI ${state.ratings.ai}`;
   }
 }
 
@@ -412,7 +434,9 @@ async function loadRatings() {
       state.ratings = { player: data.player, ai: data.ai };
     }
   } catch (error) {
-    console.warn("Could not load ratings, using defaults:", error);
+    const stored = readLocalRatings();
+    if (stored) state.ratings = stored;
+    console.warn("Could not load ratings, using local values:", error);
   }
   setRatings();
 }
@@ -490,8 +514,9 @@ function wireReset() {
       const data = await response.json();
       state.ratings = { player: data.player, ai: data.ai };
     } catch (error) {
-      console.warn("Could not reset ratings:", error);
+      console.warn("Could not reset ratings on the server, clearing locally:", error);
       state.ratings = { player: 100, ai: 100 };
+      writeLocalRatings(state.ratings);
     }
     setRatings();
   });

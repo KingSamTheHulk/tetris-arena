@@ -3,9 +3,12 @@
 > Race an AI opponent to 15 lines at level-15 gravity. Win and your rating climbs; lose and it slips. No frameworks, no build step — just Node.js and the browser.
 
 [![Node.js](https://img.shields.io/badge/node-%3E%3D18-3c873a?logo=node.js&logoColor=white)](https://nodejs.org)
+[![Live demo](https://img.shields.io/badge/live%20demo-play-3ee0ff.svg)](https://kingsamthehulk.github.io/tetris-arena/)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Tests](https://img.shields.io/badge/tests-8%20passing-brightgreen.svg)](#testing)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-success.svg)](package.json)
+
+**▶ Play it live: [kingsamthehulk.github.io/tetris-arena](https://kingsamthehulk.github.io/tetris-arena/)**
 
 ---
 
@@ -14,6 +17,7 @@
 - [Features](#features)
 - [Screenshot](#screenshot)
 - [Quick start](#quick-start)
+- [Deployment](#deployment)
 - [How to play](#how-to-play)
 - [Rules & scoring](#rules--scoring)
 - [The AI opponent](#the-ai-opponent)
@@ -34,7 +38,7 @@
 - **Level 15 gravity** — 125 ms per cell; the board fills up fast.
 - **Deterministic-feeling piece flow** — 7-bag randomizer with a live next-piece preview.
 - **Heuristic AI** — evaluates every rotation and column, scores the result, and intentionally plays imperfectly so matches stay winnable.
-- **Persistent ratings** — stored server-side in `data/scores.json`; both sides start at 100 and move ±5 per match.
+- **Persistent ratings** — stored server-side in `data/scores.json` when self-hosting, or in `localStorage` on the static GitHub Pages build; both sides start at 100 and move ±5 per match.
 - **Full input support** — keyboard, and on-screen touch buttons for mobile.
 - **Zero dependencies** — only Node's built-in `http`, `fs`, and `node:test`. No bundler, no framework.
 - **Responsive UI** — dual-board layout for desktop, stacked layout on narrow screens.
@@ -45,6 +49,10 @@
 ![Tetris Arena — player racing the AI at level 15](docs/screenshot.png)
 
 ## Quick start
+
+**Play now:** [kingsamthehulk.github.io/tetris-arena](https://kingsamthehulk.github.io/tetris-arena/) — no install needed. The GitHub Pages build is fully static, so ratings are saved in your browser's `localStorage`.
+
+To run the full version with server-side ratings, use the steps below.
 
 Requires **Node.js 18 or newer** (tested on Node 26).
 
@@ -61,6 +69,22 @@ For development with automatic restarts on file changes:
 ```bash
 npm run dev
 ```
+
+## Deployment
+
+### GitHub Pages
+
+The repo ships with [`.github/workflows/pages.yml`](.github/workflows/pages.yml), which deploys the contents of `public/` to GitHub Pages on every push to `main`.
+
+1. Go to **Settings → Pages** and set **Source** to **GitHub Actions**.
+2. Push to `main` (or run the workflow manually from the **Actions** tab).
+3. The site is published at `https://<user>.github.io/<repo>/`.
+
+Because Pages only serves static files, the `/api/*` endpoints are unavailable there. The client detects this and falls back to `localStorage` for ratings, so the demo still tracks scores across reloads — but per-visitor only.
+
+### Any Node host
+
+Run `npm start` behind a reverse proxy (or expose `HOST=0.0.0.0`) and keep `data/scores.json` on persistent storage to retain ratings across restarts.
 
 ## How to play
 
@@ -125,6 +149,9 @@ tetris-arena/
 │   └── engine.test.js     # Unit tests for the engine and AI (node:test)
 ├── docs/
 │   └── screenshot.png     # Gameplay screenshot used in this README
+├── .github/
+│   └── workflows/
+│       └── pages.yml      # Deploys public/ to GitHub Pages
 ├── data/
 │   └── scores.json        # Runtime state (ratings + match history, gitignored)
 ├── CONTRIBUTING.md        # Dev setup, style guide, PR process
