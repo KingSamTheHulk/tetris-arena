@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tetris Arena — Level 15 vs AI</title>
+  <meta name="description" content="Race an AI to 15 lines at level 15 Tetris speed. Win +5 rating, lose -5." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23070b13'/%3E%3Crect x='18' y='18' width='28' height='28' fill='%233ee0ff'/%3E%3Crect x='54' y='18' width='28' height='28' fill='%23ff4f9a'/%3E%3Crect x='36' y='54' width='28' height='28' fill='%23ffd166'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="mark">▦</span>
+      <span>TETRIS<span class="thin">ARENA</span></span>
+    </div>
+    <div class="scoreboard">
+      <div class="rating">
+        <span class="who">YOU</span>
+        <strong id="playerRating">100</strong>
+      </div>
+      <span class="vs">VS</span>
+      <div class="rating ai">
+        <span class="who">AI</span>
+        <strong id="aiRating">100</strong>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <div class="matchbar">
+      <span class="chip hot">LEVEL 15</span>
+      <span class="chip">FIRST TO 15 LINES</span>
+      <span class="chip">WIN +5 · LOSE −5</span>
+    </div>
+
+    <div class="arena">
+      <section class="panel" id="playerPanel">
+        <div class="panel-head">
+          <div class="who-block">
+            <span class="tag you">YOU</span>
+            <h2>Player</h2>
+          </div>
+          <div class="lines"><strong id="playerLines">0</strong><span>/ 15</span></div>
+        </div>
+        <div class="progress you"><span id="playerProgress"></span></div>
+        <canvas id="playerBoard" aria-label="Your Tetris board"></canvas>
+        <div class="panel-foot">
+          <div class="next">
+            <span>NEXT</span>
+            <canvas id="playerNext" aria-label="Your next piece"></canvas>
+          </div>
+          <div class="touch" aria-label="Touch controls">
+            <button type="button" data-action="left" aria-label="Move left">◀</button>
+            <button type="button" data-action="rotate" aria-label="Rotate clockwise">⟳</button>
+            <button type="button" data-action="right" aria-label="Move right">▶</button>
+            <button type="button" data-action="soft" aria-label="Soft drop">▼</button>
+            <button type="button" data-action="drop" aria-label="Hard drop">⤓</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel" id="aiPanel">
+        <div class="panel-head">
+          <div class="who-block">
+            <span class="tag ai">AI</span>
+            <h2>Machine</h2>
+          </div>
+          <div class="lines"><strong id="aiLines">0</strong><span>/ 15</span></div>
+        </div>
+        <div class="progress ai"><span id="aiProgress"></span></div>
+        <canvas id="aiBoard" aria-label="AI Tetris board"></canvas>
+        <div class="panel-foot">
+          <div class="next">
+            <span>NEXT</span>
+            <canvas id="aiNext" aria-label="AI next piece"></canvas>
+          </div>
+          <div class="status" id="aiStatus">Idle</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="keyhints">
+      <span><kbd>←</kbd><kbd>→</kbd> move</span>
+      <span><kbd>↑</kbd>/<kbd>X</kbd> rotate</span>
+      <span><kbd>Z</kbd> rotate back</span>
+      <span><kbd>↓</kbd> soft drop</span>
+      <span><kbd>Space</kbd> hard drop</span>
+    </div>
+  </main>
+
+  <footer class="foot">
+    <span>Level 15 gravity. First to 15 lines wins; topping out loses. Ratings start at 100 and move ±5 each match.</span>
+    <button class="link" id="resetRatings" type="button">Reset ratings</button>
+  </footer>
+
+  <div class="overlay" id="overlay">
+    <div class="overlay-card">
+      <div id="startView">
+        <p class="kicker">You vs AI · Level 15</p>
+        <h1>Tetris Arena</h1>
+        <p class="sub">Race the machine to <strong>15 lines</strong> at level-15 gravity. The board fills fast — keep it flat and hard-drop into gaps.</p>
+        <ul class="rules">
+          <li><span>WIN</span> First to clear 15 lines, or survive the AI.</li>
+          <li><span>LOSE</span> Top out first, or let the AI reach 15 lines.</li>
+          <li><span>RATING</span> Both start at 100. Win +5, lose −5.</li>
+          <li><span>AI</span> Strong but fallible — it misjudges some pieces.</li>
+        </ul>
+        <button class="primary" id="startBtn" type="button">Start match</button>
+      </div>
+      <div id="resultView" hidden>
+        <p class="kicker" id="resultKicker">Match complete</p>
+        <h1 id="resultTitle">You win!</h1>
+        <p class="sub" id="resultDetail"></p>
+        <div class="rating-change" id="ratingChange">+5 rating</div>
+        <p class="final-ratings" id="finalRatings"></p>
+        <button class="primary" id="rematchBtn" type="button">Play again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="countdown" id="countdown" hidden>3</div>
+
+  <script type="module" src="/game.js"></script>
+</body>
+</html>

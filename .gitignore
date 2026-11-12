@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Runtime data (ratings + match history)
+data/scores.json
+data/*.tmp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
